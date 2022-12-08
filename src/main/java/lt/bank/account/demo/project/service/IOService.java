@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import lt.bank.account.demo.project.enums.Currency;
 import lt.bank.account.demo.project.model.Operation;
 import lt.bank.account.demo.project.repository.OperationRepository;
-import lt.bank.account.demo.project.utils.StringUtils;
+import lt.bank.account.demo.project.utils.LocalDateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -48,16 +49,20 @@ public class IOService {
             try {
                 operationRepository.save(createNewOperation(line));
             } catch (Exception e) {
-                log.error("Cannot parse and save line {} from provided CSV file", line, e);
+                log.error("Cannot save line {} from provided CSV file", line, e);
             }
         });
 
     }
 
     private Operation createNewOperation(String[] line) {
+        LocalDateTime date = LocalDateUtils.parseToLocalDateTime(line[2]);
+        if (date == null) {
+            throw new IllegalArgumentException();
+        }
         return Operation.builder()
                 .accountNumber(line[0])
-                .date(StringUtils.parseToLocalDateTime(line[1]))
+                .date(date)
                 .beneficiary(line[2])
                 .comment(line[3])
                 .amount(Double.parseDouble(line[4]))
