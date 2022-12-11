@@ -1,6 +1,7 @@
 package lt.bank.account.demo.project.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,11 +15,15 @@ public class LocalDateUtils {
     }
 
     public static LocalDateTime parseToLocalDateTime(String date) {
+        return LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    public static LocalDateTime checkAndParseLocalDatetime(String date) {
         try {
-            return LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            return StringUtils.isNotEmpty(date) ? parseToLocalDateTime(date) : null;
         } catch (DateTimeParseException e) {
             log.error("Could not parse date {} to LocalDateTime", date);
-            return null;
+            throw new IllegalArgumentException();
         }
     }
 }

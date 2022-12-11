@@ -3,6 +3,7 @@ package lt.bank.account.demo.project.controller;
 import lombok.extern.slf4j.Slf4j;
 import lt.bank.account.demo.project.model.Operation;
 import lt.bank.account.demo.project.service.OperationService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,9 @@ public class OperationController {
             @RequestParam(name = "dateFrom", required = false) String from,
             @RequestParam(name = "dateTo", required = false) String to) {
 
-        return new ResponseEntity<>(operationService.getOperationsByAccountDateFromDateTo(account, from, to), HttpStatus.OK);
+        if (StringUtils.isEmpty(account)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return operationService.getOperationsByAccountDateFromDateTo(account, from, to);
     }
 }
