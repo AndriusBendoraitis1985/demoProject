@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomOperationRepositoryImpl implements CustomOperationRepository {
@@ -22,16 +23,19 @@ public class CustomOperationRepositoryImpl implements CustomOperationRepository 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Operation> q = criteriaBuilder.createQuery(Operation.class);
         Root<Operation> operation = q.from(Operation.class);
+        List<Predicate> predicates = new ArrayList<>();
 
-        Predicate predicate = criteriaBuilder.equal(operation.get("accountNumber"), account);
-
+        if (account != null) {
+            predicates.add(criteriaBuilder.equal(operation.get("accountNumber"), account));
+        }
         if (dateFrom != null) {
-            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(operation.get("date"), dateFrom));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(operation.get("date"), dateFrom));
         }
         if (dateTo != null) {
-            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThanOrEqualTo(operation.get("date"), dateTo));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(operation.get("date"), dateTo));
         }
-        q.select(operation).where(predicate);
+        q.select(operation).where(predicates.toArray(new Predicate[0]));
+        q.orderBy(criteriaBuilder.desc(operation.get("date")));
 
         TypedQuery<Operation> query = entityManager.createQuery(q);
 

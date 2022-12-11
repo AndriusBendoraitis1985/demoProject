@@ -28,8 +28,11 @@ public class OperationService {
             LocalDateTime dateFrom = LocalDateUtils.checkAndParseLocalDatetime(from);
             LocalDateTime dateTo = LocalDateUtils.checkAndParseLocalDatetime(to);
             return new ResponseEntity<>(operationRepository.findAllByAccountDateFromDateTo(account, dateFrom, dateTo), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.error("An error occurred while fetching data. {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            log.error("Request getting operations with parameters {}, {}, {} could not be executed", account, from, to);
+            log.error("Request getting operations with parameters account: {}, date from: {}, date to: {} could not be executed", account, from, to);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

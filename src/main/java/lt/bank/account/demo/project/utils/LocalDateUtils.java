@@ -22,8 +22,7 @@ public class LocalDateUtils {
         try {
             return StringUtils.isNotEmpty(date) ? parseToLocalDateTime(date) : null;
         } catch (DateTimeParseException e) {
-            log.error("Could not parse date {} to LocalDateTime", date);
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid date format: " + date);
         }
     }
 }
