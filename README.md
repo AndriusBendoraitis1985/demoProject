@@ -38,4 +38,4 @@ Endpoints:
 ## Authors
 
 Andrius Bendoraitis
-andrius.bendoraitis1985@gmail.com
+bendoraitis.andriuss@gmail.com
